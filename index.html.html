@@ -1,0 +1,779 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#f7f2ea" />
+  <title>TOKYO 2026｜9/11–9/15</title>
+  <style>
+    :root{
+      --bg:#f7f2ea;
+      --paper:#fffdf9;
+      --ink:#20201f;
+      --muted:#716d66;
+      --line:#e7dfd5;
+      --accent:#ba6f3a;
+      --accent-soft:#f3e3d4;
+      --red:#9f3f3f;
+      --red-soft:#f7e1df;
+      --green:#47705a;
+      --green-soft:#e3eee7;
+      --orange:#a66626;
+      --orange-soft:#f7ead8;
+      --shadow:0 8px 30px rgba(65,49,32,.08);
+      --radius:18px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      background:var(--bg);
+      color:var(--ink);
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+      line-height:1.55;
+    }
+    a{color:inherit}
+    button{font:inherit}
+    .shell{max-width:860px;margin:0 auto;padding:20px 16px 72px}
+    .hero{
+      background:linear-gradient(145deg,#fffdf9,#f3e8dc);
+      border:1px solid var(--line);
+      border-radius:26px;
+      padding:26px 22px;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      position:relative;
+    }
+    .hero:after{
+      content:"東京";
+      position:absolute;
+      right:-8px;
+      top:-26px;
+      font-weight:800;
+      font-size:106px;
+      color:rgba(186,111,58,.07);
+      letter-spacing:.05em;
+      pointer-events:none;
+    }
+    .eyebrow{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);font-weight:800}
+    h1{margin:4px 0 2px;font-size:34px;line-height:1.12}
+    .subtitle{color:var(--muted);margin-top:6px}
+    .trip-meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+    .pill{
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:999px;
+      padding:7px 11px;
+      font-size:13px;
+      box-shadow:0 2px 12px rgba(0,0,0,.03);
+    }
+    .tabs-wrap{
+      position:sticky;top:0;z-index:20;
+      margin:14px -16px 0;
+      padding:10px 16px 8px;
+      background:linear-gradient(var(--bg) 72%,rgba(247,242,234,0));
+    }
+    .tabs{
+      display:flex;gap:8px;overflow-x:auto;padding:2px 0 8px;
+      scrollbar-width:none;
+    }
+    .tabs::-webkit-scrollbar{display:none}
+    .tab{
+      border:1px solid var(--line);
+      background:rgba(255,253,249,.92);
+      color:var(--muted);
+      min-width:76px;
+      border-radius:14px;
+      padding:9px 12px;
+      text-align:center;
+      cursor:pointer;
+      font-weight:700;
+      box-shadow:0 3px 14px rgba(65,49,32,.04);
+    }
+    .tab small{display:block;font-size:10px;font-weight:600;margin-top:2px}
+    .tab.active{background:var(--ink);color:white;border-color:var(--ink)}
+    .section{display:none;margin-top:10px}
+    .section.active{display:block}
+    .day-head{
+      background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+      padding:18px;margin-bottom:12px;box-shadow:var(--shadow);
+    }
+    .day-title{display:flex;justify-content:space-between;gap:16px;align-items:flex-start}
+    .day-title h2{margin:0;font-size:26px}
+    .route{color:var(--muted);font-size:14px;margin-top:4px}
+    .summary{margin-top:12px;display:flex;gap:8px;flex-wrap:wrap}
+    .tag{
+      display:inline-flex;align-items:center;gap:5px;
+      font-size:12px;font-weight:800;border-radius:999px;padding:5px 9px;
+    }
+    .fixed{background:var(--red-soft);color:var(--red)}
+    .flex{background:var(--green-soft);color:var(--green)}
+    .target{background:var(--orange-soft);color:var(--orange)}
+    .timeline{
+      background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+      padding:8px 16px 6px;box-shadow:var(--shadow);
+    }
+    .item{
+      display:grid;grid-template-columns:74px 22px 1fr;gap:0;
+      min-height:76px;
+    }
+    .time{padding-top:18px;font-size:13px;font-weight:800;color:var(--muted)}
+    .rail{position:relative}
+    .rail:before{
+      content:"";position:absolute;left:10px;top:0;bottom:0;width:2px;background:var(--line)
+    }
+    .item:first-child .rail:before{top:24px}
+    .item:last-child .rail:before{bottom:calc(100% - 26px)}
+    .dot{
+      position:absolute;left:4px;top:22px;width:14px;height:14px;
+      border-radius:50%;background:var(--paper);border:3px solid #b4aba1;z-index:2
+    }
+    .item.is-fixed .dot{border-color:var(--red)}
+    .item.is-flex .dot{border-color:var(--green)}
+    .item.is-target .dot{border-color:var(--orange)}
+    .content{padding:14px 0 16px 10px;border-bottom:1px dashed var(--line)}
+    .item:last-child .content{border-bottom:none}
+    .title-row{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+    .event-title{font-weight:800;font-size:16px}
+    .desc{color:var(--muted);font-size:13px;margin-top:3px}
+    .actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:9px}
+    .btn{
+      display:inline-flex;align-items:center;gap:5px;text-decoration:none;
+      border:1px solid var(--line);background:#fff;border-radius:10px;
+      padding:6px 9px;font-size:12px;font-weight:700;
+    }
+    .btn.primary{background:var(--ink);color:#fff;border-color:var(--ink)}
+    .btn.stock{background:var(--orange-soft);color:#7a4819;border-color:#e5c8a6}
+    .callout{
+      margin:12px 0 0;border-radius:14px;padding:12px 13px;font-size:13px;
+      background:#faf4ec;border:1px solid #ead7c3
+    }
+    .callout strong{display:block;margin-bottom:3px}
+    .cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+    .card{
+      background:var(--paper);border:1px solid var(--line);border-radius:16px;
+      padding:15px;box-shadow:var(--shadow)
+    }
+    .card h3{margin:0 0 7px;font-size:15px}
+    .card p{margin:3px 0;color:var(--muted);font-size:13px}
+    .quick{
+      display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:12px
+    }
+    .quick a{
+      text-decoration:none;background:var(--paper);border:1px solid var(--line);
+      border-radius:14px;padding:14px;box-shadow:var(--shadow);font-weight:800
+    }
+    .quick span{display:block;color:var(--muted);font-weight:500;font-size:12px;margin-top:2px}
+    .notes{
+      margin-top:12px;background:var(--paper);border:1px solid var(--line);
+      border-radius:16px;padding:15px;box-shadow:var(--shadow)
+    }
+    .notes label{font-weight:800;font-size:14px;display:block;margin-bottom:7px}
+    textarea{
+      width:100%;min-height:90px;resize:vertical;border:1px solid var(--line);
+      border-radius:12px;background:#fff;padding:10px;font:inherit;color:var(--ink)
+    }
+    .save-msg{font-size:11px;color:var(--muted);margin-top:5px}
+    .gr-box{
+      background:linear-gradient(145deg,#272727,#111);color:white;
+      border-radius:18px;padding:17px;margin-top:12px;box-shadow:var(--shadow)
+    }
+    .gr-box h3{margin:0 0 4px;font-size:19px}
+    .gr-box p{color:#cfcfcf;margin:3px 0;font-size:13px}
+    .gr-check{
+      margin-top:12px;display:flex;gap:8px;flex-wrap:wrap
+    }
+    .toggle{
+      border:1px solid #555;background:#242424;color:#fff;
+      padding:7px 10px;border-radius:10px;cursor:pointer;font-weight:700;font-size:12px
+    }
+    .toggle.done{background:#e7f0e9;color:#315840;border-color:#bdd0c2}
+    .legend{
+      display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;padding:0 2px
+    }
+    footer{margin-top:28px;text-align:center;color:var(--muted);font-size:12px}
+    @media(max-width:640px){
+      .shell{padding:12px 12px 56px}
+      .tabs-wrap{margin-left:-12px;margin-right:-12px;padding-left:12px;padding-right:12px}
+      h1{font-size:29px}
+      .cards{grid-template-columns:1fr}
+      .item{grid-template-columns:60px 20px 1fr}
+      .content{padding-left:8px}
+      .quick{grid-template-columns:1fr 1fr}
+      .hero{padding:22px 17px}
+      .hero:after{font-size:84px}
+    }
+  </style>
+</head>
+<body>
+<div class="shell">
+  <header class="hero">
+    <div class="eyebrow">TOKYO TRIP · 2026</div>
+    <h1>東京旅行 🇯🇵</h1>
+    <div class="subtitle">9/11 Fri — 9/15 Tue ｜ 淺草為住宿據點</div>
+    <div class="trip-meta">
+      <div class="pill">✈️ 9/11 JX802 · 10:40 台北 → 東京</div>
+      <div class="pill">✈️ 9/15 JX805 · 20:40 東京 → 台北</div>
+      <div class="pill">📷 9/12 任務：買 RICOH GR IV</div>
+    </div>
+  </header>
+
+  <div class="tabs-wrap">
+    <nav class="tabs" aria-label="旅行日期">
+      <button class="tab" data-day="d11">9/11<small>FRI</small></button>
+      <button class="tab" data-day="d12">9/12<small>SAT</small></button>
+      <button class="tab" data-day="d13">9/13<small>SUN</small></button>
+      <button class="tab" data-day="d14">9/14<small>MON</small></button>
+      <button class="tab" data-day="d15">9/15<small>TUE</small></button>
+    </nav>
+  </div>
+
+  <div class="legend">
+    <span class="tag fixed">🔴 FIXED 不建議動</span>
+    <span class="tag target">🟠 TARGET 這趟要完成</span>
+    <span class="tag flex">🟢 FLEXIBLE 可調整</span>
+  </div>
+
+  <!-- 9/11 -->
+  <section class="section" id="d11">
+    <div class="day-head">
+      <div class="day-title">
+        <div>
+          <h2>9/11 Fri</h2>
+          <div class="route">台北 → 成田 → 淺草</div>
+        </div>
+        <span class="tag fixed">抵達日</span>
+      </div>
+      <div class="summary">
+        <span class="pill">✈️ JX802 10:40</span>
+        <span class="pill">🍖 晚餐：本とさや</span>
+        <span class="pill">🏨 淺草 Check-in</span>
+      </div>
+    </div>
+
+    <div class="timeline">
+      <div class="item is-fixed">
+        <div class="time">10:40</div><div class="rail"><span class="dot"></span></div>
+        <div class="content">
+          <div class="event-title">JX802｜台北 → 東京</div>
+          <div class="desc">固定航班。抵達後入境、領行李，再前往淺草。</div>
+        </div>
+      </div>
+
+      <div class="item is-flex">
+        <div class="time">下午</div><div class="rail"><span class="dot"></span></div>
+        <div class="content">
+          <div class="event-title">抵達成田 → 前往淺草</div>
+          <div class="desc">依實際入境與行李時間彈性調整。</div>
+        </div>
+      </div>
+
+      <div class="item is-target">
+        <div class="time">晚餐</div><div class="rail"><span class="dot"></span></div>
+        <div class="content">
+          <div class="event-title">本とさや｜Hontosaya</div>
+          <div class="desc">抵達日晚餐。</div>
+          <div class="actions">
+            <a class="btn primary" href="https://maps.app.goo.gl/rhqc6veyVQGvUpni6?g_st=il" target="_blank" rel="noopener">📍 Google Maps</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="item is-fixed">
+        <div class="time">晚上</div><div class="rail"><span class="dot"></span></div>
+        <div class="content">
+          <div class="event-title">Check-in｜淺草</div>
+          <div class="desc">🐒 HOTEL TAVINOS ASAKUSA ／ 🦭 VESSEL INN ASAKUSA TSUKUBA EXPRESS</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cards">
+      <div class="card">
+        <h3>🐒 HOTEL TAVINOS ASAKUSA</h3>
+        <p>2 Chome-18-8 Asakusa, Taito City</p>
+        <div class="actions"><a class="btn" href="https://maps.app.goo.gl/zjfCxTSGs1G3fsP2A?g_st=ic" target="_blank" rel="noopener">📍 導航</a></div>
+      </div>
+      <div class="card">
+        <h3>🦭 VESSEL INN ASAKUSA</h3>
+        <p>1 Chome-15-1 Senzoku, Taito City</p>
+        <div class="actions"><a class="btn" href="https://maps.app.goo.gl/aPtB1qff99jhwehk8?g_st=ic" target="_blank" rel="noopener">📍 導航</a></div>
+      </div>
+    </div>
+
+    <div class="notes"><label for="note-d11">📝 9/11 備註</label><textarea id="note-d11" data-note="d11" placeholder="例如：到機場後先買 Suica、晚餐候補…"></textarea><div class="save-msg">會自動保存在這台裝置的瀏覽器。</div></div>
+  </section>
+
+  <!-- 9/12 -->
+  <section class="section" id="d12">
+    <div class="day-head">
+      <div class="day-title">
+        <div>
+          <h2>9/12 Sat</h2>
+          <div class="route">淺草 → 秋葉原 → 藏前 → 麻布台 → 六本木</div>
+        </div>
+        <span class="tag target">📷 GR IV DAY</span>
+      </div>
+      <div class="summary">
+        <span class="pill">09:15 FUGLEN</span>
+        <span class="pill">10:30 買 GR IV</span>
+        <span class="pill">17:15 63ANGEL 排隊</span>
+      </div>
+
+      <div class="gr-box">
+        <h3>RICOH GR IV 購買任務</h3>
+        <p>JAN：4549212311291</p>
+        <p>優先策略：早餐後直接去秋葉原；以店頭庫存頁顯示有貨的兩間 あきばお～ 為主。</p>
+        <div class="gr-check">
+          <a class="btn stock" href="http://www.akibaoo.jp/php/tools/shop_stocks/show.php?jancode=4549212311291" target="_blank" rel="noopener">📦 即時庫存頁</a>
+          <button class="toggle" id="grDone">✓ 標記：已買到 GR IV</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="timeline">
+      <div class="item is-flex">
+        <div class="time">09:15</div><div class="rail"><span class="dot"></span></div>
+        <div class="content">
+          <div class="event-title">FUGLEN ASAKUSA｜早餐</div>
+          <div class="desc">早餐後直接往秋葉原，不先逛藏前。</div>
+          <div class="actions"><a class="btn" href="https://www.google.com/maps/search/?api=1&query=FUGLEN+ASAKUSA" target="_blank" rel="noopener">📍 Maps</a></div>
+        </div>
+      </div>
+
+      <div class="item is-target">
+        <div class="time">10:00</div><div class="rail"><span class="dot"></span></div>
+        <div class="content">
+          <div class="event-title">前往秋葉原</div>
+          <div class="desc">預留約 25–30 分鐘移動與找店時間。</div>
+        </div>
+      </div>
+
+      <div class="item is-target">
+        <div class="time">10:30</div><div class="rail"><span class="dot"></span></div>
+        <div class="content">
+          <div class="title-row">
+            <div>
+              <div class="event-title">📷 あきばお～｜買 RICOH GR IV</div>
+              <div class="desc">先去庫存頁目前顯示有貨的第一間；若現場已售出，直接去第二間。</div>
+            </div>
+            <span class="tag target">TARGET</span>
+          </div>
+          <div class="actions">
+            <a class="btn stock" href="http://www.akibaoo.jp/php/tools/shop_stocks/show.php?jancode=4549212311291" target="_blank" rel="noopener">📦 查庫存</a>
+            <a class="btn" href="https://www.google.com/maps/search/?api=1&query=あきばお～+秋葉原" target="_blank" rel="noopener">📍 搜尋門市</a>
+          </div>
+          <div class="callout">
+            <strong>購買節奏</strong>
+            第一間有貨就買；無貨不要久等，直接移動第二間。建議最晚 11:30–12:00 結束購機，避免壓縮下午。
+          </div>
+        </div>
+      </div>
+
+      <div class="item is-flex">
+        <div class="time">12:00</div><div class="rail"><span class="dot"></span></div>
+        <div class="content">
+          <div class="event-title">回藏前／午餐</div>
+          <div class="desc">原規劃：牛たんの檸檬；依購機完成時間彈性銜接。</div>
+          <div class="actions"><a class="btn" href="https://www.google.com/maps/search/?api=1&query=牛たんの檸檬+東京" target="_blank" rel="noopener">📍 Maps</a></div>
+        </div>
+      </div>
+
+      <div class="item is-flex">
+        <div class="time">13:00</div><div class="rail"><span class="dot"></span></div>
+        <div class="content">
+          <div class="event-title">藏前｜家飾・文具・選物</div>
+          <div class="desc">這段是今天最大的彈性區。相機購買拖延時可直接縮短。</div>
+        </div>
+      </div>
+
+      <div class="item is-flex">
+        <div class="time">15:00</div><div class="rail"><span class="dot"></span></div>
+        <div class="content">
+          <div class="event-title">回飯店休息／放東西</div>
+          <div class="desc">放 GR IV 舊包裝或其他戰利品，整理後再出門。</div>
+        </div>
+      </div>
+
+      <div class="item is-flex">
+        <div class="time">16:00</div><div class="rail"><span class="dot"></span></div>
+        <div class="content">
+          <div class="event-title">麻布台｜BULY・海木</div>
+          <div class="desc">原朋友規劃；若前面延誤，這段也可縮短。</div>
+        </div>
+      </div>
+
+      <div class="item is-fixed">
+        <div class="time">17:15</div><div class="rail"><span class="dot"></span></div>
+        <div class="content">
+          <div class="title-row">
+            <div><div class="event-title">63ANGEL｜排隊</div><div class="desc">固定行程，建議把它當今天的硬截止時間。</div></div>
+            <span class="tag fixed">FIXED</span>
+          </div>
+          <div class="actions"><a class="btn primary" href="https://maps.app.goo.gl/nMvT8j1BXerMHNyc9?g_st=ic" target="_blank" rel="noopener">📍 導航</a></div>
+        </div>
+      </div>
+
+      <div class="item is-fixed">
+        <div class="time">18:00</div><div class="rail"><span class="dot"></span></div>
+        <div class="content">
+          <div class="event-title">OPEN ／ 18:30 SHOW</div>
+        </div>
+      </div>
+
+      <div class="item is-fixed">
+        <div class="time">19:50</div><div class="rail"><span class="dot"></span></div>
+        <div class="content">
+          <div class="event-title">63ANGEL 結束</div>
+          <div class="desc">晚餐候選：SAVOY 麻布十番／入鹿TOKYO／D-29。</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="quick">
+      <a href="http://www.akibaoo.jp/php/tools/shop_stocks/show.php?jancode=4549212311291" target="_blank" rel="noopener">📦 GR IV 庫存<span>出發前與到店前再查一次</span></a>
+      <a href="https://maps.app.goo.gl/nMvT8j1BXerMHNyc9?g_st=ic" target="_blank" rel="noopener">🎭 63ANGEL<span>固定行程導航</span></a>
+    </div>
+
+    <div class="notes"><label for="note-d12">📝 9/12 備註</label><textarea id="note-d12" data-note="d12" placeholder="例如：GR IV 第一順位店、實際購入價格、免稅狀況…"></textarea><div class="save-msg">會自動保存在這台裝置的瀏覽器。</div></div>
+  </section>
+
+  <!-- 9/13 -->
+  <section class="section" id="d13">
+    <div class="day-head">
+      <div class="day-title">
+        <div>
+          <h2>9/13 Sun</h2>
+          <div class="route">中目黑／下北澤 → 讀賣樂園 → 淺草</div>
+        </div>
+        <span class="tag fixed">17:00 PokéPark</span>
+      </div>
+      <div class="summary">
+        <span class="pill">上午鞋子採買</span>
+        <span class="pill">17:00 寶可夢 × 讀賣樂園</span>
+        <span class="pill">晚餐／酒吧候選</span>
+      </div>
+
+      <div class="gr-box">
+        <h3>👟 今日主要採買：3 雙鞋</h3>
+        <p>① adidas TERREX FREEHIKER LT MULE｜第一張穿搭圖鞋款</p>
+        <p>② HOKA Kaha 3 Low GORE-TEX｜亞麻／燕麥奶色</p>
+        <p>③ Vans Crosspath XC GORE-TEX｜薄綠／黑配色</p>
+        <div class="gr-check">
+          <button class="toggle shoe-check" data-shoe="terrex">✓ TERREX</button>
+          <button class="toggle shoe-check" data-shoe="hoka">✓ HOKA</button>
+          <button class="toggle shoe-check" data-shoe="vans">✓ VANS</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="timeline">
+      <div class="item is-flex">
+        <div class="time">09:00</div><div class="rail"><span class="dot"></span></div>
+        <div class="content"><div class="event-title">淺草早餐／慢慢出門</div><div class="desc">鞋店多半不會太早開，不需要為採買犧牲早餐。</div></div>
+      </div>
+
+      <div class="item is-target">
+        <div class="time">11:00</div><div class="rail"><span class="dot"></span></div>
+        <div class="content">
+          <div class="title-row">
+            <div><div class="event-title">👟 原宿｜HOKA + VANS</div><div class="desc">先處理兩個在原宿就能集中的品牌，避免分散跑店。</div></div>
+            <span class="tag target">TARGET</span>
+          </div>
+          <div class="actions">
+            <a class="btn" href="https://www.google.com/maps/search/?api=1&query=HOKA+Harajuku+Tokyo" target="_blank" rel="noopener">📍 HOKA 原宿</a>
+            <a class="btn" href="https://www.google.com/maps/search/?api=1&query=VANS+STORE+HARAJUKU" target="_blank" rel="noopener">📍 VANS 原宿</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="item is-target">
+        <div class="time">12:30</div><div class="rail"><span class="dot"></span></div>
+        <div class="content">
+          <div class="event-title">👟 adidas TERREX FREEHIKER LT MULE｜第三雙</div>
+          <div class="desc">接著找 adidas TERREX；型號已確認為 TERREX FREEHIKER LT MULE；優先找第一張穿搭圖的棕灰／卡其色系。</div>
+          <div class="actions">
+            <a class="btn" href="https://www.google.com/maps/search/?api=1&query=adidas+TERREX+Harajuku+Tokyo" target="_blank" rel="noopener">📍 搜尋 TERREX 門市</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="item is-flex">
+        <div class="time">13:30</div><div class="rail"><span class="dot"></span></div>
+        <div class="content"><div class="event-title">午餐／原宿・新宿周邊</div><div class="desc">以鞋子實際購買進度決定，不另外跨區吃指定餐廳。</div></div>
+      </div>
+
+      <div class="item is-fixed">
+        <div class="time">15:30</div><div class="rail"><span class="dot"></span></div>
+        <div class="content">
+          <div class="event-title">停止購物 → 前往讀賣樂園</div>
+          <div class="desc">不論是否買齊，都在這裡收手，替 17:00 PokéPark 留足移動緩衝。</div>
+        </div>
+      </div>
+
+      <div class="item is-fixed">
+        <div class="time">17:00</div><div class="rail"><span class="dot"></span></div>
+        <div class="content">
+          <div class="title-row"><div><div class="event-title">PokéPark KANTO × 讀賣樂園</div><div class="desc">今天的固定主行程。</div></div><span class="tag fixed">FIXED</span></div>
+          <div class="actions"><a class="btn primary" href="https://maps.app.goo.gl/QZJqKJS1JVnvwqSK7?g_st=ic" target="_blank" rel="noopener">📍 導航</a></div>
+        </div>
+      </div>
+
+      <div class="item is-flex">
+        <div class="time">20:00</div><div class="rail"><span class="dot"></span></div>
+        <div class="content"><div class="event-title">晚餐候選｜Oyster Bar</div><div class="desc">未定；也可考慮 Cristiano's。</div></div>
+      </div>
+
+      <div class="item is-flex">
+        <div class="time">21:00</div><div class="rail"><span class="dot"></span></div>
+        <div class="content"><div class="event-title">酒吧候選</div><div class="desc">依體力與回淺草時間決定。</div></div>
+      </div>
+
+      <div class="item is-flex">
+        <div class="time">22:00</div><div class="rail"><span class="dot"></span></div>
+        <div class="content"><div class="event-title">回淺草</div><div class="desc">若還有體力再看宵夜。</div></div>
+      </div>
+    </div>
+
+    <div class="notes"><label for="note-d13">📝 9/13 備註</label><textarea id="note-d13" data-note="d13" placeholder="例如：想逛的玩具店、PokéPark 入場資訊…"></textarea><div class="save-msg">會自動保存在這台裝置的瀏覽器。</div></div>
+  </section>
+
+  <!-- 9/14 -->
+  <section class="section" id="d14">
+    <div class="day-head">
+      <div class="day-title">
+        <div>
+          <h2>9/14 Mon</h2>
+          <div class="route">大月 → 河口湖 → 富士吉田 → 新倉山淺間公園 → 大石公園 → 新宿</div>
+        </div>
+        <span class="tag fixed">富士山 ALL DAY</span>
+      </div>
+      <div class="summary">
+        <span class="pill">10:49 富士山ビュー特急</span>
+        <span class="pill">13:50 新倉山淺間公園</span>
+        <span class="pill">17:41 富士回遊48號</span>
+        <span class="pill">20:15 晚餐 4人</span>
+      </div>
+      <div class="callout">
+        <strong>🗻 當天原則</strong>
+        FUJISAN SHOKUPAN 排隊太久直接跳過；16:25 後以準時回河口湖站搭 17:41 富士回遊為最高優先。
+      </div>
+    </div>
+
+    <div class="timeline">
+      <div class="item is-fixed">
+        <div class="time">10:49–11:46</div><div class="rail"><span class="dot"></span></div>
+        <div class="content"><div class="event-title">富士山ビュー特急｜大月 → 河口湖</div><div class="desc">去程已確定。</div></div>
+      </div>
+
+      <div class="item is-fixed">
+        <div class="time">11:46</div><div class="rail"><span class="dot"></span></div>
+        <div class="content"><div class="event-title">抵達河口湖站</div></div>
+      </div>
+
+      <div class="item is-flex">
+        <div class="time">11:50–12:05</div><div class="rail"><span class="dot"></span></div>
+        <div class="content"><div class="event-title">LAWSON × 富士山</div><div class="desc">步行約 2–3 分鐘。</div><div class="actions"><a class="btn" href="https://www.google.com/maps/search/?api=1&query=LAWSON+Kawaguchiko+Station+Mount+Fuji" target="_blank" rel="noopener">📍 Maps</a></div></div>
+      </div>
+
+      <div class="item is-flex">
+        <div class="time">12:05–12:15</div><div class="rail"><span class="dot"></span></div>
+        <div class="content"><div class="event-title">FUJISAN SHOKUPAN</div><div class="desc">富士山吐司／布丁；排隊太長就跳過。</div><div class="actions"><a class="btn" href="https://www.google.com/maps/search/?api=1&query=FUJISAN+SHOKUPAN+Kawaguchiko" target="_blank" rel="noopener">📍 Maps</a></div></div>
+      </div>
+
+      <div class="item is-target">
+        <div class="time">12:15–12:30</div><div class="rail"><span class="dot"></span></div>
+        <div class="content"><div class="event-title">前往富士吉田本町通</div><div class="desc">Taxi 約 15 分鐘。</div></div>
+      </div>
+
+      <div class="item is-target">
+        <div class="time">12:30–13:00</div><div class="rail"><span class="dot"></span></div>
+        <div class="content"><div class="event-title">本町通／日川時計店街景</div><div class="desc">拍街道＋巨大富士山。</div><div class="actions"><a class="btn" href="https://www.google.com/maps/search/?api=1&query=Hikawa+Clock+Shop+Fujiyoshida" target="_blank" rel="noopener">📍 Maps</a></div></div>
+      </div>
+
+      <div class="item is-flex">
+        <div class="time">13:00–13:40</div><div class="rail"><span class="dot"></span></div>
+        <div class="content"><div class="event-title">富士吉田午餐</div><div class="desc">吉田烏龍麵首選；定食備選；簡單排隊長就放棄。</div></div>
+      </div>
+
+      <div class="item is-target">
+        <div class="time">13:40–13:50</div><div class="rail"><span class="dot"></span></div>
+        <div class="content"><div class="event-title">前往新倉山淺間公園</div><div class="desc">Taxi 約 5–10 分鐘。</div></div>
+      </div>
+
+      <div class="item is-target">
+        <div class="time">13:50–15:00</div><div class="rail"><span class="dot"></span></div>
+        <div class="content"><div class="event-title">新倉山淺間公園＋忠靈塔</div><div class="desc">約 70 分鐘；需爬階梯。</div><div class="actions"><a class="btn primary" href="https://www.google.com/maps/search/?api=1&query=Arakurayama+Sengen+Park" target="_blank" rel="noopener">📍 Maps</a></div></div>
+      </div>
+
+      <div class="item is-target">
+        <div class="time">15:00–15:25</div><div class="rail"><span class="dot"></span></div>
+        <div class="content"><div class="event-title">前往大石公園</div><div class="desc">Taxi 約 20–25 分鐘。</div></div>
+      </div>
+
+      <div class="item is-target">
+        <div class="time">15:25–16:25</div><div class="rail"><span class="dot"></span></div>
+        <div class="content"><div class="event-title">大石公園＋河口湖</div><div class="desc">湖＋富士山；有時間再吃冰淇淋／水果甜點／咖啡。</div><div class="actions"><a class="btn primary" href="https://www.google.com/maps/search/?api=1&query=Oishi+Park+Kawaguchiko" target="_blank" rel="noopener">📍 Maps</a></div></div>
+      </div>
+
+      <div class="item is-fixed">
+        <div class="time">16:25–16:50</div><div class="rail"><span class="dot"></span></div>
+        <div class="content"><div class="event-title">大石公園 → 河口湖站</div><div class="desc">Taxi 最保險；開始以回程火車為最高優先。</div></div>
+      </div>
+
+      <div class="item is-fixed">
+        <div class="time">16:50–17:30</div><div class="rail"><span class="dot"></span></div>
+        <div class="content"><div class="event-title">河口湖站周邊／伴手禮</div><div class="desc">買飲料、小點心；預留搭車 buffer。</div></div>
+      </div>
+
+      <div class="item is-fixed">
+        <div class="time">17:41–19:48</div><div class="rail"><span class="dot"></span></div>
+        <div class="content"><div class="event-title">富士回遊48號｜河口湖 → 新宿</div><div class="desc">回程已確定。</div></div>
+      </div>
+
+      <div class="item is-fixed">
+        <div class="time">19:48</div><div class="rail"><span class="dot"></span></div>
+        <div class="content"><div class="event-title">抵達新宿</div></div>
+      </div>
+
+      <div class="item is-fixed">
+        <div class="time">20:15</div><div class="rail"><span class="dot"></span></div>
+        <div class="content"><div class="event-title">Zekkocho Teppen｜4人</div>
+          <div class="desc">新宿居酒屋晚餐｜西新宿 1-14-5 浅田ビル 3F</div>
+          <div class="actions"><a class="btn primary" href="https://www.google.com/maps/dir/?api=1&destination=Zekkocho+Teppen%2C+1-14-5+Nishishinjuku%2C+Shinjuku+City%2C+Tokyo" target="_blank" rel="noopener">📍 導航</a></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="notes"><label for="note-d14">📝 9/14 備註</label><textarea id="note-d14" data-note="d14" placeholder="例如：富士山天氣、Taxi、GR IV 電池／記憶卡確認…"></textarea><div class="save-msg">會自動保存在這台裝置的瀏覽器。</div></div>
+  </section>
+
+  <!-- 9/15 -->
+  <section class="section" id="d15">
+    <div class="day-head">
+      <div class="day-title">
+        <div>
+          <h2>9/15 Tue</h2>
+          <div class="route">淺草 → 新宿 → 成田 → 台北</div>
+        </div>
+        <span class="tag fixed">回程日</span>
+      </div>
+      <div class="summary">
+        <span class="pill">08:00 退房／寄行李</span>
+        <span class="pill">16:00 結束購物</span>
+        <span class="pill">20:40 JX805</span>
+      </div>
+
+    </div>
+
+    <div class="timeline">
+      <div class="item is-fixed">
+        <div class="time">08:00</div><div class="rail"><span class="dot"></span></div>
+        <div class="content"><div class="event-title">退房／寄放行李</div></div>
+      </div>
+
+      <div class="item is-flex">
+        <div class="time">09:00</div><div class="rail"><span class="dot"></span></div>
+        <div class="content"><div class="event-title">淺草 → 新宿</div></div>
+      </div>
+
+      <div class="item is-flex">
+        <div class="time">11:00</div><div class="rail"><span class="dot"></span></div>
+        <div class="content"><div class="event-title">新宿購物</div><div class="desc">UNIQLO／內衣／襪子／SABON／Aesop 等最後採買。若 9/13 有鞋沒買到，也可在這天補。</div></div>
+      </div>
+
+      <div class="item is-flex">
+        <div class="time">12:00</div><div class="rail"><span class="dot"></span></div>
+        <div class="content"><div class="event-title">午餐候選｜和牛燒肉</div></div>
+      </div>
+
+      <div class="item is-flex">
+        <div class="time">14:00</div><div class="rail"><span class="dot"></span></div>
+        <div class="content">
+          <div class="event-title">其餘購物／抹茶｜有時間再排</div>
+          <div class="desc">THE MATCHA TOKYO、Age.3 GINZA 都降為候選。三雙鞋尚未買齊時，不建議為了甜點特地跨區。</div>
+        </div>
+      </div>
+
+      <div class="item is-fixed">
+        <div class="time">16:00</div><div class="rail"><span class="dot"></span></div>
+        <div class="content"><div class="event-title">結束購物 → 回淺草取行李</div></div>
+      </div>
+
+      <div class="item is-fixed">
+        <div class="time">17:00</div><div class="rail"><span class="dot"></span></div>
+        <div class="content"><div class="event-title">前往成田</div></div>
+      </div>
+
+      <div class="item is-fixed">
+        <div class="time">18:00</div><div class="rail"><span class="dot"></span></div>
+        <div class="content"><div class="event-title">成田報到／出境</div></div>
+      </div>
+
+      <div class="item is-fixed">
+        <div class="time">20:40</div><div class="rail"><span class="dot"></span></div>
+        <div class="content"><div class="event-title">JX805｜東京 → 台北</div></div>
+      </div>
+    </div>
+
+    <div class="notes"><label for="note-d15">📝 9/15 備註</label><textarea id="note-d15" data-note="d15" placeholder="例如：最後採買清單、機場要找的商品…"></textarea><div class="save-msg">會自動保存在這台裝置的瀏覽器。</div></div>
+  </section>
+
+  <footer>
+    TOKYO 2026 · 手機版旅行 Dashboard<br>
+    行程中的候選店家可依現場狀況彈性調整。
+  </footer>
+</div>
+
+<script>
+(function(){
+  const tabs=[...document.querySelectorAll('.tab')];
+  const sections=[...document.querySelectorAll('.section')];
+
+  function chooseDay(id){
+    tabs.forEach(t=>t.classList.toggle('active',t.dataset.day===id));
+    sections.forEach(s=>s.classList.toggle('active',s.id===id));
+    localStorage.setItem('tokyo-selected-day',id);
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+
+  tabs.forEach(t=>t.addEventListener('click',()=>chooseDay(t.dataset.day)));
+
+  const now=new Date();
+  const y=now.getFullYear(), m=now.getMonth()+1, d=now.getDate();
+  let defaultDay=localStorage.getItem('tokyo-selected-day');
+  if(y===2026 && m===9 && d>=11 && d<=15) defaultDay='d'+d;
+  if(!defaultDay || !document.getElementById(defaultDay)) defaultDay='d12';
+  chooseDay(defaultDay);
+
+  document.querySelectorAll('textarea[data-note]').forEach(el=>{
+    const key='tokyo-note-'+el.dataset.note;
+    el.value=localStorage.getItem(key)||'';
+    el.addEventListener('input',()=>localStorage.setItem(key,el.value));
+  });
+
+  const grDone=document.getElementById('grDone');
+  if(localStorage.getItem('tokyo-gr-done')==='1'){
+    grDone.classList.add('done');
+    grDone.textContent='✓ 已買到 GR IV';
+  }
+  grDone.addEventListener('click',()=>{
+    const done=!grDone.classList.contains('done');
+    grDone.classList.toggle('done',done);
+    grDone.textContent=done?'✓ 已買到 GR IV':'✓ 標記：已買到 GR IV';
+    localStorage.setItem('tokyo-gr-done',done?'1':'0');
+  });
+
+  document.querySelectorAll('.shoe-check').forEach(btn=>{
+    const key='tokyo-shoe-'+btn.dataset.shoe;
+    if(localStorage.getItem(key)==='1') btn.classList.add('done');
+    btn.addEventListener('click',()=>{
+      const done=!btn.classList.contains('done');
+      btn.classList.toggle('done',done);
+      localStorage.setItem(key,done?'1':'0');
+    });
+  });
+})();
+</script>
+</body>
+</html>
